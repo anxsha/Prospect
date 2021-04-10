@@ -141,7 +141,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="Disc.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Rover.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="Disc.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Rover.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

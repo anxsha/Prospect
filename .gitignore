@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 .clang-format
 .clang-tidy
+/.clang-tidy.cpt_backup

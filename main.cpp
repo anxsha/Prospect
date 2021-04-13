@@ -38,7 +38,7 @@ void init_size() {
   glLoadIdentity();
 }
 
-void keybindings(int key, int, int) {
+void keybindings(int key, int x, int y) {
   switch (key) {
     case GLUT_KEY_RIGHT:
       y_rot = (y_rot - 2) % 360;

@@ -6,7 +6,6 @@ int x_rot = 0;
 int y_rot = 0;
 
 
-
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
@@ -38,7 +37,7 @@ void init_size() {
   glLoadIdentity();
 }
 
-void keybindings(int key, int x, int y) {
+void key_down(int key, int x, int y) {
   switch (key) {
     case GLUT_KEY_RIGHT:
       y_rot = (y_rot - 2) % 360;
@@ -61,11 +60,11 @@ void resize(int width, int height) { glutReshapeWindow(1280, 720); }
 int main(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutCreateWindow("OpenGl");
+  glutCreateWindow("Prospect");
   glutInitWindowSize(1280, 720);
   glutDisplayFunc(display);
   glutReshapeFunc(resize);
-  glutSpecialFunc(keybindings);
+  glutSpecialFunc(key_down);
 
   init_size();
 

@@ -27,7 +27,5 @@ void Rectangle::Draw(float x1, float length, float y1, float height, float z1, f
         glEnd();
       }
     }
-
   }
-
 }

@@ -7,6 +7,7 @@
 
 void Rover::Draw() {
   constexpr float ORIGIN_Y = -20.0f;
+  constexpr float ORIGIN_X = 0.0f;
   constexpr float ROVER_WIDTH = 60.0f;
   constexpr float ROVER_LENGTH = 80.0f;
 
@@ -18,31 +19,31 @@ void Rover::Draw() {
 
   // £¹czenia kó³
   glColor3f(0.3, 0.3, 0.4);
-  Cylinder::Draw(0.0f, ORIGIN_Y, 4.0f, ROVER_WIDTH - 4.0f, 2.0f);
+  Cylinder::Draw(ORIGIN_X, ORIGIN_Y, 4.0f, ROVER_WIDTH - 4.0f, 2.0f);
   Cylinder::Draw(ROVER_LENGTH / 2.0f, ORIGIN_Y, 4.0f, ROVER_WIDTH - 4.0f, 2.0f);
   Cylinder::Draw(ROVER_LENGTH, ORIGIN_Y, 4.0f, ROVER_WIDTH - 4.0f, 2.0f);
 
   // £¹czenie œrodkowe na dole
   glPushMatrix();
   glRotatef(90, 0.0, 1.0, 0.0);
-  Cylinder::Draw(-32.25f, ORIGIN_Y, 0.0f, 80.0f, 2.0f);
+  Cylinder::Draw(-((ROVER_WIDTH / 2) + (4.5 / 2)), ORIGIN_Y, 0.0f, ROVER_LENGTH, 2.0f);
   glPopMatrix();
 
   // £¹czenia do platformy
   glPushMatrix();
-  glTranslatef(0.0f, ORIGIN_Y, 4.5f);
-  glRotatef(360 - 60, 1.0, 0.0, 0.0);
+  glTranslatef(ORIGIN_X, ORIGIN_Y, 4.5f);
+  //glRotatef(360 - 60, 1.0, 0.0, 0.0);
   glRotatef(45, 0.0, 1.0, 0.0);
-  glTranslatef(0.0f, -ORIGIN_Y, -4.5f);
-  Cylinder::Draw(0.0f, ORIGIN_Y, 4.5f, 52.0f, 2.0f);
+  glTranslatef(ORIGIN_X, -ORIGIN_Y, -4.5f);
+  Cylinder::Draw(ORIGIN_X, ORIGIN_Y, 4.5f, 52.0f, 2.0f);
   glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(0.0f, ORIGIN_Y, ROVER_WIDTH);
+  glTranslatef(ORIGIN_X, ORIGIN_Y, ROVER_WIDTH);
   glRotatef(240, 1.0, 0.0, 0.0);
   glRotatef(45, 0.0, 1.0, 0.0);
-  glTranslatef(0.0f, -ORIGIN_Y, -ROVER_WIDTH);
-  Cylinder::Draw(0.0f, ORIGIN_Y, ROVER_WIDTH, 52.0f, 2.0f);
+  glTranslatef(ORIGIN_X, -ORIGIN_Y, -ROVER_WIDTH);
+  Cylinder::Draw(ORIGIN_X, ORIGIN_Y, ROVER_WIDTH, 52.0f, 2.0f);
   glPopMatrix();
 
   glPushMatrix();
@@ -115,11 +116,11 @@ void Rover::Draw() {
 
   // Jedna strona kó³
   glColor3f(0.3, 0.3, 0.3);
-  Cylinder::Draw(0.0f, ORIGIN_Y, 0.0f, 4.5f, 10.0f);
+  Cylinder::Draw(ORIGIN_X, ORIGIN_Y, 0.0f, 4.5f, 10.0f);
   Cylinder::Draw(ROVER_LENGTH / 2, ORIGIN_Y, 0.0f, 4.5f, 10.0f);
   Cylinder::Draw(ROVER_LENGTH, ORIGIN_Y, 0.0f, 4.5f, 10.0f);
   // Druga strona kó³
-  Cylinder::Draw(0.0f, ORIGIN_Y, 60.0f, 4.5f, 10.0f);
+  Cylinder::Draw(ORIGIN_X, ORIGIN_Y, 60.0f, 4.5f, 10.0f);
   Cylinder::Draw(ROVER_LENGTH / 2, ORIGIN_Y, 60.0f, 4.5f, 10.0f);
   Cylinder::Draw(ROVER_LENGTH, ORIGIN_Y, 60.0f, 4.5f, 10.0f);
 

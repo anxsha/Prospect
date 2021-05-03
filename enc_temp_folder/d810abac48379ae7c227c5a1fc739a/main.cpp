@@ -22,6 +22,7 @@ void load_textures() {
   int y;
   int n;
   for (int i = 0; i < env_objects.size(); ++i) {
+    // glActiveTexture(GL_TEXTURE0+i);
     glGenTextures(1, &textures.at(i));
     glBindTexture(GL_TEXTURE_2D, textures.at(i));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NEAREST);

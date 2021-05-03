@@ -141,10 +141,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="resources\cone.mtl" />
+    <None Include="resources\rock.mtl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Rock035_1K_AmbientOcclusion.jpg" />
+    <Image Include="resources\Rock035_1K_Color.jpg" />
+    <Image Include="resources\Rock035_1K_Displacement.jpg" />
+    <Image Include="resources\Rock035_1K_Normal.jpg" />
+    <Image Include="resources\Rock035_1K_Roughness.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Disc.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ObjModel.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rover.cpp" />
@@ -153,9 +165,12 @@
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Disc.h" />
+    <ClInclude Include="ObjModel.h" />
+    <ClInclude Include="OBJ_Loader.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rover.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

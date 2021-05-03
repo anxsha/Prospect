@@ -7,14 +7,14 @@
 
 void Rover::Draw() {
   constexpr float ORIGIN_Y = 0.0f;
-  constexpr float ORIGIN_X = 0.0f;
+  constexpr float ORIGIN_X = -30.0f;
   constexpr float ROVER_WIDTH = 60.0f;
   constexpr float ROVER_LENGTH = 80.0f;
 
   glPushMatrix();
 
   // Zmniejszenie i obrót
-  glScalef(0.8f, 0.8f, 0.8f);
+  glScalef(0.2f, 0.2f, 0.2f);
   glRotatef(90, 0.0, 1.0, 0.0);
 
   // £¹czenia kó³

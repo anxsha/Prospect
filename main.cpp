@@ -2,8 +2,9 @@
 #include <GL/glut.h>
 #include <string>
 #include <vector>
-#include "Renderer.h"
+//#include "Renderer.h"
 #include "ObjModel.h"
+#include "Rover.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -15,6 +16,8 @@ std::vector<unsigned int> textures;
 std::vector<std::string> img_names{"light_rock.jpg", "surface.jpg", "wood.jpeg",
                                    "tree.jpg",       "wood.jpeg",   "tree.jpg",
                                    "container.jpg"};
+
+auto rover = Rover();
 
 void load_textures() {
   textures = std::vector<unsigned int>(env_objects.size(), 0);
@@ -41,9 +44,9 @@ void load_textures() {
 
 void load_env_objects() {
   env_objects.emplace_back("rock.obj", std::vector<float>{0.4f, 0.4f, 0.4f},
-                           std::vector<float>{30.0f, 5.0f, 12.0f}, 6);
-  env_objects.emplace_back("surface.obj", std::vector<float>{0.5f, 0.5f, 0.5f},
-                           std::vector<float>{0.0f, 0.0f, 100.0f}, 11);
+                           std::vector<float>{30.0f, 4.7f, 12.0f}, 6);
+  env_objects.emplace_back("surface.obj", std::vector<float>{1.0f, 0.8f, 0.8f},
+                           std::vector<float>{0.0f, -0.8f, 100.0f}, 20);
   env_objects.emplace_back("trunk.obj", std::vector<float>{1.0f, 1.0f, 1.0f},
                            std::vector<float>{-40.0f, 0.0f, 20.0f}, 7);
   env_objects.emplace_back("tree.obj", std::vector<float>{0.2f, 0.5f, 0.2f},
@@ -54,7 +57,7 @@ void load_env_objects() {
                            std::vector<float>{-50.0f, 13.0f, 90.0f}, 7);
   env_objects.emplace_back("buildings.obj",
                            std::vector<float>{0.8f, 0.8f, 0.8f},
-                           std::vector<float>{30.0f, 0.0f, 80.0f}, 7);
+                           std::vector<float>{30.0f, -0.8f, 80.0f}, 7);
 }
 
 void display() {
@@ -78,7 +81,9 @@ void display() {
 
   glDisable(GL_TEXTURE_2D);
 
-  Renderer::Render();
+  // Renderer::Render();
+
+  rover.Draw();
 
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glFlush();
@@ -100,7 +105,7 @@ void init_size() {
   glLoadIdentity();
 }
 
-void key_down(int key, int x, int y) {
+void spec_key_down(int key, int x, int y) {
   switch (key) {
     case GLUT_KEY_RIGHT:
       y_rot = (y_rot - 2) % 360;
@@ -118,6 +123,30 @@ void key_down(int key, int x, int y) {
   glutPostRedisplay();
 }
 
+void key_down(unsigned char key, int x, int y) {
+  switch (key) {
+    case 'w':
+      rover.Accelerate();
+      break;
+    case 's':
+      rover.Brake();
+      break;
+    case 'a':
+      rover.TurnLeft();
+      break;
+    case 'd':
+      rover.TurnRight();
+      break;
+  }
+  glutPostRedisplay();
+}
+
+void update(int val) {
+  rover.UpdatePos();
+  glutPostRedisplay();
+  glutTimerFunc(50, update, 0);
+}
+
 void resize(int width, int height) { glutReshapeWindow(1600, 900); }
 
 int main(int argc, char** argv) {
@@ -127,7 +156,9 @@ int main(int argc, char** argv) {
   glutInitWindowSize(1600, 900);
   glutDisplayFunc(display);
   // glutReshapeFunc(resize);
-  glutSpecialFunc(key_down);
+  glutSpecialFunc(spec_key_down);
+  glutKeyboardFunc(key_down);
+  glutTimerFunc(50, update, 0);
 
   init_size();
   // glewInit();

@@ -9,6 +9,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+auto key_states = std::vector<bool>(256);
+
 int x_rot = 0;
 int y_rot = 0;
 std::vector<ObjModel> env_objects;
@@ -124,25 +126,30 @@ void spec_key_down(int key, int x, int y) {
 }
 
 void key_down(unsigned char key, int x, int y) {
-  switch (key) {
-    case 'w':
-      rover.Accelerate();
-      break;
-    case 's':
-      rover.Brake();
-      break;
-    case 'a':
-      rover.TurnLeft();
-      break;
-    case 'd':
-      rover.TurnRight();
-      break;
-  }
-  glutPostRedisplay();
+  //switch (key) {
+  //  case 'w':
+  //    rover.Accelerate();
+  //    break;
+  //  case 's':
+  //    rover.Brake();
+  //    break;
+  //  case 'a':
+  //    rover.TurnLeft();
+  //    break;
+  //  case 'd':
+  //    rover.TurnRight();
+  //    break;
+  //}
+  key_states.at(key) = true;
+  //glutPostRedisplay();
+}
+
+void key_up(unsigned char key, int x, int y) {
+  key_states.at(key) = false;
 }
 
 void update(int val) {
-  rover.UpdatePos();
+  rover.UpdatePos(key_states);
   glutPostRedisplay();
   glutTimerFunc(50, update, 0);
 }
@@ -158,6 +165,7 @@ int main(int argc, char** argv) {
   // glutReshapeFunc(resize);
   glutSpecialFunc(spec_key_down);
   glutKeyboardFunc(key_down);
+  glutKeyboardUpFunc(key_up);
   glutTimerFunc(50, update, 0);
 
   init_size();

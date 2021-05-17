@@ -16,6 +16,7 @@ Rover::Rover()
       origin_z{-20.0f},
       speed{0.0f},
       wheel_rot{0.0f},
+      front_dir {true},
       rover_centre_x{origin_x + ROVER_LENGTH / 2.0f},
       rover_centre_z{origin_z + ROVER_WIDTH / 2.0f + 2.25f} {};
 
@@ -38,15 +39,15 @@ void Rover::Brake() {
 }
 
 void Rover::TurnRight() {
-  if (wheel_rot < 360) {
+  //if (wheel_rot < 360) {
     wheel_rot += 5.0f;
-  }
+  //}
 }
 
 void Rover::TurnLeft() {
-  if (wheel_rot > -360) {
+  //if (wheel_rot > -360) {
     wheel_rot -= 5.0f;
-  }
+  //}
 }
 
 void Rover::UpdatePos(const std::vector<bool>& key_states) {
@@ -76,6 +77,11 @@ void Rover::UpdatePos(const std::vector<bool>& key_states) {
   if (key_states.at('d')) {
     TurnRight();
   }
+  if (key_states.at('d') || key_states.at('a')) {
+    front_dir = false;
+  } else {
+    front_dir = true;
+  }
   if (speed > 4.0f || speed < -4.0f) {
     float dx = speed * 0.03f * cos(wheel_rot * PI / 180);
     float dz = speed * 0.03f * sin(-wheel_rot * PI / 180);
@@ -100,7 +106,7 @@ void Rover::Draw() {
   glScalef(SCALE, SCALE, SCALE);
 
   glTranslatef(rover_centre_x, origin_y, rover_centre_z);
-  glRotatef(-wheel_rot / 1.5, 0.0, 1, 0.0);
+  glRotatef(-wheel_rot, 0.0, 1, 0.0);
   glTranslatef(-rover_centre_x, -origin_y, -rover_centre_z);
 
   glColor3f(1, 0, 0);
@@ -235,9 +241,11 @@ void Rover::Draw() {
   // Jedna strona kó³
   glColor3f(0.5, 0.3, 0.3);
   glPushMatrix();
-  glTranslatef(origin_x, origin_y, origin_z);
-  glRotatef(-wheel_rot / 2, 0.0f, 1.0f, 0.0f);
-  glTranslatef(-origin_x, -origin_y, -origin_z);
+  if (!front_dir) {
+    glTranslatef(origin_x, origin_y, origin_z);
+    glRotatef(-wheel_rot / 2, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-origin_x, -origin_y, -origin_z);
+  }
   Cylinder::Draw(origin_x, origin_y, origin_z, 4.5f, 10.0f);
   glPopMatrix();
   glColor3f(0.3, 0.3, 0.3);
@@ -245,18 +253,22 @@ void Rover::Draw() {
   Cylinder::Draw(origin_x + ROVER_LENGTH / 2, origin_y, origin_z, 4.5f, 10.0f);
 
   glPushMatrix();
-  glTranslatef(origin_x + ROVER_LENGTH, origin_y, origin_z);
-  glRotatef(-wheel_rot / 3, 0.0f, 1.0f, 0.0f);
-  glTranslatef(-(origin_x + ROVER_LENGTH), -origin_y, -origin_z);
+  if (!front_dir) {
+    glTranslatef(origin_x + ROVER_LENGTH, origin_y, origin_z);
+    glRotatef(-wheel_rot / 3, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-(origin_x + ROVER_LENGTH), -origin_y, -origin_z);
+  }
   Cylinder::Draw(origin_x + ROVER_LENGTH, origin_y, origin_z, 4.5f, 10.0f);
   glPopMatrix();
 
   // Druga strona kó³
   glColor3f(0.5, 0.3, 0.3);
   glPushMatrix();
-  glTranslatef(origin_x, origin_y, origin_z + 60);
-  glRotatef(-wheel_rot / 2, 0.0f, 1.0f, 0.0f);
-  glTranslatef(-origin_x, -origin_y, -(origin_z + 60));
+  if (!front_dir) {
+    glTranslatef(origin_x, origin_y, origin_z + 60);
+    glRotatef(-wheel_rot / 2, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-origin_x, -origin_y, -(origin_z + 60));
+  }
   Cylinder::Draw(origin_x, origin_y, origin_z + 60.0f, 4.5f, 10.0f);
   glPopMatrix();
   glColor3f(0.3, 0.3, 0.3);
@@ -265,10 +277,12 @@ void Rover::Draw() {
                  10.0f);
 
   glPushMatrix();
-  glTranslatef(origin_x + ROVER_LENGTH, origin_y, origin_z + ROVER_WIDTH);
-  glRotatef(-wheel_rot / 3, 0.0f, 1.0f, 0.0f);
-  glTranslatef(-(origin_x + ROVER_LENGTH), -origin_y,
-               -(origin_z + ROVER_WIDTH));
+  if (!front_dir) {
+    glTranslatef(origin_x + ROVER_LENGTH, origin_y, origin_z + ROVER_WIDTH);
+    glRotatef(-wheel_rot / 3, 0.0f, 1.0f, 0.0f);
+    glTranslatef(-(origin_x + ROVER_LENGTH), -origin_y,
+                 -(origin_z + ROVER_WIDTH));
+  }
   Cylinder::Draw(origin_x + ROVER_LENGTH, origin_y, origin_z + ROVER_WIDTH,
                  4.5f, 10.0f);
   glPopMatrix();

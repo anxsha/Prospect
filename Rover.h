@@ -17,5 +17,5 @@ class Rover {
   float wheel_rot;
   float rover_centre_x;
   float rover_centre_z;
-  bool front_dir;
+  float wheel_turn;
 };

@@ -64,6 +64,9 @@
     <ClCompile Include="ObjModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cuboid.h">
@@ -91,6 +94,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

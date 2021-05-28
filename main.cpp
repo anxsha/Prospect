@@ -1,10 +1,10 @@
-//#include <GL/glew.h>
 #include <GL/glut.h>
 #include <string>
 #include <vector>
-//#include "Renderer.h"
+#include <memory>
 #include "ObjModel.h"
 #include "Rover.h"
+#include "Ball.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -13,13 +13,15 @@ auto key_states = std::vector<bool>(256);
 
 int x_rot = 0;
 int y_rot = 0;
-std::vector<ObjModel> env_objects;
+std::vector<std::unique_ptr<ObjModel>> env_objects;
 std::vector<unsigned int> textures;
 std::vector<std::string> img_names{"light_rock.jpg", "surface.jpg", "wood.jpeg",
                                    "tree.jpg",       "wood.jpeg",   "tree.jpg",
                                    "container.jpg"};
 
 auto rover = Rover();
+
+constexpr int BALL_INDEX = 0;
 
 void load_textures() {
   textures = std::vector<unsigned int>(env_objects.size(), 0);
@@ -37,7 +39,6 @@ void load_textures() {
     if (data) {
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA,
                    GL_UNSIGNED_BYTE, data);
-      // glGenerateMipmap(GL_TEXTURE_2D);
     }
     stbi_image_free(data);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -45,21 +46,27 @@ void load_textures() {
 }
 
 void load_env_objects() {
-  env_objects.emplace_back("rock.obj", std::vector<float>{0.4f, 0.4f, 0.4f},
-                           std::vector<float>{30.0f, 4.7f, 12.0f}, 6);
-  env_objects.emplace_back("surface.obj", std::vector<float>{1.0f, 0.8f, 0.8f},
-                           std::vector<float>{0.0f, -0.8f, 100.0f}, 20);
-  env_objects.emplace_back("trunk.obj", std::vector<float>{1.0f, 1.0f, 1.0f},
-                           std::vector<float>{-40.0f, 0.0f, 20.0f}, 7);
-  env_objects.emplace_back("tree.obj", std::vector<float>{0.2f, 0.5f, 0.2f},
-                           std::vector<float>{-40.0f, 19.0f, 20.0f}, 7);
-  env_objects.emplace_back("trunk.obj", std::vector<float>{1.0f, 1.0f, 1.0f},
-                           std::vector<float>{-50.0f, 0.0f, 90.0f}, 7);
-  env_objects.emplace_back("tree.obj", std::vector<float>{0.1f, 0.4f, 0.1f},
-                           std::vector<float>{-50.0f, 13.0f, 90.0f}, 7);
-  env_objects.emplace_back("buildings.obj",
-                           std::vector<float>{0.8f, 0.8f, 0.8f},
-                           std::vector<float>{30.0f, -0.8f, 80.0f}, 7);
+  env_objects.push_back(std::make_unique<Ball>(
+      Ball("rock.obj", std::vector<float>{0.4f, 0.4f, 0.4f},
+           std::vector<float>{30.0f, 4.7f, 12.0f}, 6)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("surface.obj", std::vector<float>{1.0f, 0.8f, 0.8f},
+               std::vector<float>{0.0f, -0.8f, 100.0f}, 20)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("trunk.obj", std::vector<float>{1.0f, 1.0f, 1.0f},
+               std::vector<float>{-40.0f, 0.0f, 20.0f}, 7)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("tree.obj", std::vector<float>{0.2f, 0.5f, 0.2f},
+               std::vector<float>{-40.0f, 19.0f, 20.0f}, 7)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("trunk.obj", std::vector<float>{1.0f, 1.0f, 1.0f},
+               std::vector<float>{-50.0f, 0.0f, 90.0f}, 7)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("tree.obj", std::vector<float>{0.1f, 0.4f, 0.1f},
+               std::vector<float>{-50.0f, 13.0f, 90.0f}, 7)));
+  env_objects.push_back(std::make_unique<ObjModel>(
+      ObjModel("buildings.obj", std::vector<float>{0.8f, 0.8f, 0.8f},
+               std::vector<float>{30.0f, -0.8f, 80.0f}, 7)));
 }
 
 void display() {
@@ -75,15 +82,13 @@ void display() {
   glEnable(GL_TEXTURE_2D);
 
   int i = 0;
-  for (auto& obj : env_objects) {
+  for (auto&& obj : env_objects) {
     glBindTexture(GL_TEXTURE_2D, textures.at(i));
-    obj.Draw();
+    obj->Draw();
     ++i;
   }
 
   glDisable(GL_TEXTURE_2D);
-
-  // Renderer::Render();
 
   rover.Draw();
 
@@ -125,31 +130,13 @@ void spec_key_down(int key, int x, int y) {
   glutPostRedisplay();
 }
 
-void key_down(unsigned char key, int x, int y) {
-  //switch (key) {
-  //  case 'w':
-  //    rover.Accelerate();
-  //    break;
-  //  case 's':
-  //    rover.Brake();
-  //    break;
-  //  case 'a':
-  //    rover.TurnLeft();
-  //    break;
-  //  case 'd':
-  //    rover.TurnRight();
-  //    break;
-  //}
-  key_states.at(key) = true;
-  //glutPostRedisplay();
-}
+void key_down(unsigned char key, int x, int y) { key_states.at(key) = true; }
 
-void key_up(unsigned char key, int x, int y) {
-  key_states.at(key) = false;
-}
+void key_up(unsigned char key, int x, int y) { key_states.at(key) = false; }
 
 void update(int val) {
-  rover.UpdatePos(key_states);
+  rover.UpdatePos(key_states, env_objects.at(BALL_INDEX)->getPos(),
+                  env_objects.at(BALL_INDEX)->getRadius());
   glutPostRedisplay();
   glutTimerFunc(50, update, 0);
 }
@@ -169,7 +156,6 @@ int main(int argc, char** argv) {
   glutTimerFunc(50, update, 0);
 
   init_size();
-  // glewInit();
 
   load_env_objects();
   load_textures();

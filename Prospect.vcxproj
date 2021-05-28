@@ -152,6 +152,7 @@
     <Image Include="resources\Rock035_1K_Roughness.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Disc.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Rover.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Ball.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Disc.h" />

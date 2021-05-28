@@ -1,13 +1,36 @@
-#include "ObjModel.h"
+#include "Ball.h"
 #include <GL/glut.h>
 
-ObjModel::ObjModel(const std::string filename, const std::vector<float> color,
-                    std::vector<float> coords, const float scale)
-    : color_(color), coords_(coords), scale_(scale) {
-  loader_.LoadFile(filename);
-}
+Ball::Ball(const std::string filename, const std::vector<float> color,
+           std::vector<float> coords, const float scale)
+    : ObjModel{filename, color, coords, scale}, radius_{6.0f} {}
 
-void ObjModel::Draw() {
+void Ball::Draw() {
+  glColor3f(1.0, 0, 0);
+  //glBegin(GL_LINES);
+  //glVertex3f(coords_.at(0), coords_.at(1) - 5, coords_.at(2));
+  //glVertex3f(coords_.at(0), coords_.at(1) + 50, coords_.at(2));
+  //glEnd();
+  //glColor3f(1.0, 0, 0);
+  //glBegin(GL_LINES);
+  //glVertex3f(coords_.at(0), coords_.at(1) - 5, coords_.at(2) + 6);
+  //glVertex3f(coords_.at(0), coords_.at(1) + 50, coords_.at(2) + 6);
+  //glEnd();
+  //glColor3f(1.0, 0, 0);
+  //glBegin(GL_LINES);
+  //glVertex3f(coords_.at(0), coords_.at(1) - 5, coords_.at(2) - 6);
+  //glVertex3f(coords_.at(0), coords_.at(1) + 50, coords_.at(2) - 6);
+  //glEnd();
+  //glColor3f(1.0, 0, 0);
+  //glBegin(GL_LINES);
+  //glVertex3f(coords_.at(0) - 6, coords_.at(1) - 5, coords_.at(2));
+  //glVertex3f(coords_.at(0) - 6, coords_.at(1) + 50, coords_.at(2));
+  //glEnd();
+  //glColor3f(1.0, 0, 0);
+  //glBegin(GL_LINES);
+  //glVertex3f(coords_.at(0) + 6, coords_.at(1) - 5, coords_.at(2));
+  //glVertex3f(coords_.at(0) + 6, coords_.at(1) + 50, coords_.at(2));
+  //glEnd();
   glPushMatrix();
   glScalef(scale_, scale_, scale_);
   objl::Mesh mesh;
@@ -16,6 +39,7 @@ void ObjModel::Draw() {
     auto v1 = std::vector<float>(3);
     auto v2 = std::vector<float>(3);
     auto v3 = std::vector<float>(3);
+
     for (auto& j_mesh : i_mesh.Indices) {
       if (n == 0) {
         v1.at(0) = i_mesh.Vertices[j_mesh].Position.X;
@@ -56,6 +80,4 @@ void ObjModel::Draw() {
   glPopMatrix();
 }
 
-std::vector<float> ObjModel::getPos() { return coords_; }
-
-float ObjModel::getRadius() { return 0.0f; }
+float Ball::getRadius() { return radius_; }

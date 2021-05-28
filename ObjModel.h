@@ -6,10 +6,12 @@
 class ObjModel {
  public:
   ObjModel(const std::string filename, const std::vector<float> color,
-           const std::vector<float> coords, const float scale);
-  void Draw();
+            std::vector<float> coords, const float scale);
+  virtual void Draw();
+  virtual std::vector<float> getPos();
+  virtual float getRadius();
 
- private:
+ protected:
   const std::vector<float> color_;
   const std::vector<float> coords_;
   const float scale_;

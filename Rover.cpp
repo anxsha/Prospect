@@ -9,8 +9,9 @@ constexpr float PI = 3.14159265;
 constexpr float ROVER_WIDTH = 60.0f;
 constexpr float ROVER_LENGTH = 80.0f;
 constexpr float SCALE = 0.15f;
-constexpr float left_turn = 35;
-constexpr float right_turn = -35;
+constexpr float left_turn = 35.0f;
+constexpr float right_turn = -35.0f;
+constexpr float ROVER_RADIUS = 35.0f;
 
 Rover::Rover()
     : origin_y{0.0f},
@@ -44,7 +45,8 @@ void Rover::TurnRight() { wheel_rot += 5.0f; }
 
 void Rover::TurnLeft() { wheel_rot -= 5.0f; }
 
-void Rover::UpdatePos(const std::vector<bool>& key_states) {
+void Rover::UpdatePos(const std::vector<bool>& key_states,
+                      const std::vector<float>& obstacle_coords, float radius) {
   if (key_states.at('w')) {
     Accelerate();
   }
@@ -67,10 +69,16 @@ void Rover::UpdatePos(const std::vector<bool>& key_states) {
   if (speed > 4.0f || speed < -4.0f) {
     float dx = speed * 0.03f * cos(wheel_rot * PI / 180);
     float dz = speed * 0.03f * sin(-wheel_rot * PI / 180);
-    origin_x -= dx;
-    origin_z += dz;
-    rover_centre_x = origin_x + ROVER_LENGTH / 2.0f;
-    rover_centre_z = origin_z + ROVER_WIDTH / 2.0f + 2.25f;
+    if (CheckCollision(obstacle_coords.at(0), obstacle_coords.at(2), radius,
+                       origin_x - dx + ROVER_LENGTH / 2.0f,
+                       origin_z + dz + ROVER_WIDTH / 2.0f + 2.25f)) {
+      speed = 0;
+    } else {
+      origin_x -= dx;
+      origin_z += dz;
+      rover_centre_x = origin_x + ROVER_LENGTH / 2.0f;
+      rover_centre_z = origin_z + ROVER_WIDTH / 2.0f + 2.25f;
+    }
   }
   if (speed > -2.0f && speed < 2.0f) {
     speed = 0.0f;
@@ -83,7 +91,6 @@ void Rover::UpdatePos(const std::vector<bool>& key_states) {
 
 void Rover::Draw() {
   glPushMatrix();
-
   // Zmniejszenie
   glScalef(SCALE, SCALE, SCALE);
 
@@ -91,12 +98,41 @@ void Rover::Draw() {
   glRotatef(-wheel_rot, 0.0, 1, 0.0);
   glTranslatef(-rover_centre_x, -origin_y, -rover_centre_z);
 
-  glColor3f(1, 0, 0);
+
+ /* glColor3f(1, 0, 0);
   glPointSize(15);
   glBegin(GL_LINES);
   glVertex3f(rover_centre_x, 0, rover_centre_z);
   glVertex3f(rover_centre_x, 200, rover_centre_z);
-  glEnd();
+  glEnd();*/
+
+  //glColor3f(1, 0, 0);
+  //glPointSize(15);
+  //glBegin(GL_LINES);
+  //glVertex3f(rover_centre_x + ROVER_RADIUS, 0, rover_centre_z);
+  //glVertex3f(rover_centre_x + ROVER_RADIUS, 200, rover_centre_z);
+  //glEnd();
+
+  //glColor3f(1, 0, 0);
+  //glPointSize(15);
+  //glBegin(GL_LINES);
+  //glVertex3f(rover_centre_x - ROVER_RADIUS, 0, rover_centre_z);
+  //glVertex3f(rover_centre_x - ROVER_RADIUS, 200, rover_centre_z);
+  //glEnd();
+
+  //glColor3f(1, 0, 0);
+  //glPointSize(15);
+  //glBegin(GL_LINES);
+  //glVertex3f(rover_centre_x, 0, rover_centre_z - ROVER_RADIUS);
+  //glVertex3f(rover_centre_x, 200, rover_centre_z - ROVER_RADIUS);
+  //glEnd();
+
+  //glColor3f(1, 0, 0);
+  //glPointSize(15);
+  //glBegin(GL_LINES);
+  //glVertex3f(rover_centre_x, 0, rover_centre_z + ROVER_RADIUS);
+  //glVertex3f(rover_centre_x, 200, rover_centre_z + ROVER_RADIUS);
+  //glEnd();
 
   // £¹czenia kó³
   glColor3f(0.3, 0.3, 0.4);
@@ -262,4 +298,11 @@ void Rover::Draw() {
   glPopMatrix();
 
   glPopMatrix();
+}
+
+bool Rover::CheckCollision(float obj_centre_x, float obj_centre_z, float radius,
+                           float new_x, float new_z) {
+  float dist = sqrt(pow((obj_centre_x - new_x * SCALE), 2) +
+                    pow(obj_centre_z - new_z * SCALE, 2));
+  return dist <= (radius + ROVER_RADIUS * SCALE);
 }

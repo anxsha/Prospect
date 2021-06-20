@@ -306,3 +306,6 @@ bool Rover::CheckCollision(float obj_centre_x, float obj_centre_z, float radius,
                     pow(obj_centre_z - new_z * SCALE, 2));
   return dist <= (radius + ROVER_RADIUS * SCALE);
 }
+float Rover::ZPos() { return rover_centre_z; }
+
+float Rover::XPos() { return rover_centre_x; }

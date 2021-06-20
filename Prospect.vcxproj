@@ -167,6 +167,7 @@
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Disc.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="ObjModel.h" />
     <ClInclude Include="OBJ_Loader.h" />
     <ClInclude Include="Rectangle.h" />

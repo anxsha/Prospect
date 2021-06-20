@@ -1,10 +1,13 @@
 #include <GL/glut.h>
 #include <string>
+#include <iomanip>
+#include <sstream>
 #include <vector>
 #include <memory>
 #include "ObjModel.h"
 #include "Rover.h"
 #include "Ball.h"
+#include "Cylinder.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -19,9 +22,21 @@ std::vector<std::string> img_names{"light_rock.jpg", "surface.jpg", "wood.jpeg",
                                    "tree.jpg",       "wood.jpeg",   "tree.jpg",
                                    "container.jpg"};
 
+std::vector<std::vector<float>> goals = {{30.0f, 50.0f},
+                                         {20.0f, 125.0f},
+                                         {-65.0f, 170.0f},
+                                         {0.0, 30.0},
+                                         {20.0, -60.0}};
+auto time_results = std::vector<std::string>(4);
+int cur_goal = 0;
+int cur_result = 0;
+bool game_on = false;
+float game_time = 0;
+
 auto rover = Rover();
 
 constexpr int BALL_INDEX = 0;
+constexpr int GOALS_NUM = 5;
 
 void load_textures() {
   textures = std::vector<unsigned int>(env_objects.size(), 0);
@@ -69,6 +84,32 @@ void load_env_objects() {
                std::vector<float>{30.0f, -0.8f, 80.0f}, 7)));
 }
 
+void DrawResults() {
+  char results[4][20];
+  strcpy_s(results[0], time_results.at(0).c_str());
+  strcpy_s(results[1], time_results.at(1).c_str());
+  strcpy_s(results[2], time_results.at(2).c_str());
+  strcpy_s(results[3], time_results.at(3).c_str());
+
+  glPushMatrix();
+  glTranslatef(44.5, 35, 71.5);
+  glRotatef(180, 0.0, 1.0, 0.0);
+  glScalef(0.04, 0.04, 0.04);
+  glColor3f(1, 1, 1);
+  for (int line = 0; line < 4; ++line) {
+    int len = strlen(results[line]);
+    glPushMatrix();
+
+    glTranslatef(-(len * 37), -(line * 200), 0.0);
+    for (int i = 0; i < len; i++) {
+      glColor3f(1, 1, 1.0);
+      glutStrokeCharacter(GLUT_STROKE_ROMAN, results[line][i]);
+    }
+    glPopMatrix();
+  }
+  glPopMatrix();
+}
+
 void display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
@@ -79,8 +120,9 @@ void display() {
   glRotated(x_rot, 1.0, 0.0, 0.0);
   glRotated(y_rot, 0.0, 1.0, 0.0);
 
+  gluLookAt(rover.XPos() * 0.15 * 0.8 + 5, 20, rover.ZPos() * 0.15 * 0.8 - 10,
+            rover.XPos() * 0.15 * 0.8+10, -15, rover.ZPos() * 0.15 * 0.8+10, 0, 1, 0);
   glEnable(GL_TEXTURE_2D);
-
   int i = 0;
   for (auto&& obj : env_objects) {
     glBindTexture(GL_TEXTURE_2D, textures.at(i));
@@ -89,6 +131,14 @@ void display() {
   }
 
   glDisable(GL_TEXTURE_2D);
+
+  DrawResults();
+
+  if (game_on) {
+    glColor3f(1.0f, 0.84f, 0.0f);
+    Cylinder::Draw(goals.at(cur_goal).at(0), 0.0f, goals.at(cur_goal).at(1),
+                   6.0f, 5.0f);
+  }
 
   rover.Draw();
 
@@ -114,7 +164,7 @@ void init_size() {
 
 void spec_key_down(int key, int x, int y) {
   switch (key) {
-    case GLUT_KEY_RIGHT:
+    /*case GLUT_KEY_RIGHT:
       y_rot = (y_rot - 2) % 360;
       break;
     case GLUT_KEY_LEFT:
@@ -125,6 +175,9 @@ void spec_key_down(int key, int x, int y) {
       break;
     case GLUT_KEY_DOWN:
       x_rot = (x_rot + 2) % 360;
+      break;*/
+    case GLUT_KEY_F1:
+      game_on = true;
       break;
   }
   glutPostRedisplay();
@@ -141,6 +194,30 @@ void update(int val) {
   glutTimerFunc(50, update, 0);
 }
 
+void game_state_update(int val) {
+  if (game_on) {
+    game_time += 0.1;
+    if (rover.CheckCollision(goals.at(cur_goal).at(0), goals.at(cur_goal).at(1),
+                             6.5f, rover.XPos(), rover.ZPos())) {
+      ++cur_goal;
+      if (cur_goal == GOALS_NUM) {
+        game_on = false;
+        std::stringstream str;
+        if (game_time < 100.0f) {
+          str << std::fixed << std::setprecision(3) << game_time;
+          time_results.at(cur_result) = str.str();
+          ++cur_result;
+          cur_result %= 4;
+        }
+        game_time = 0;
+        cur_goal = 0;
+      }
+    }
+  }
+  glutPostRedisplay();
+  glutTimerFunc(100, game_state_update, 0);
+}
+
 void resize(int width, int height) { glutReshapeWindow(1600, 900); }
 
 int main(int argc, char** argv) {
@@ -149,11 +226,12 @@ int main(int argc, char** argv) {
   glutCreateWindow("Prospect");
   glutInitWindowSize(1600, 900);
   glutDisplayFunc(display);
-  // glutReshapeFunc(resize);
+  glutReshapeFunc(resize);
   glutSpecialFunc(spec_key_down);
   glutKeyboardFunc(key_down);
   glutKeyboardUpFunc(key_up);
   glutTimerFunc(50, update, 0);
+  glutTimerFunc(100, game_state_update, 0);
 
   init_size();
 

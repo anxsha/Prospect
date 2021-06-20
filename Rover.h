@@ -12,6 +12,9 @@ class Rover {
   void TurnLeft();
   bool CheckCollision(float obj_centre_x, float obj_centre_z, float radius, float new_x, float new_z);
 
+  float ZPos();
+  float XPos();
+
  private:
   float origin_y;
   float origin_x;
